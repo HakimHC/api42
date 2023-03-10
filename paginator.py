@@ -6,7 +6,7 @@
 #    By: hakahmed <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/10 00:50:08 by hakahmed          #+#    #+#              #
-#    Updated: 2023/03/10 02:17:59 by hakahmed         ###   ########.fr        #
+#    Updated: 2023/03/10 04:41:03 by hakahmed         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,27 +14,22 @@ import requests
 import time
 import pandas as pd
 import json
-from sqlalchemy import *
-import sqlalchemy
+from pymongo import MongoClient
+import ssl
 
+
+client = MongoClient("mongodb+srv://hakimdb:FN9MDwiJi0WUZ7gl@cluster0.w3nu1yq.mongodb.net", ssl_cert_reqs=ssl.CERT_NONE)
+
+db = client.kaki
+collection = db.kaka
 headers = {
 
-    "Authorization": "Bearer dcd81527930ed2fd82dd7c55e7e3b62ffddeff16a15f7fff8a24f6a956aa2a45"
+    "Authorization": "Bearer eb58b4f1726af3e371a9c08a83acabea55f77dc4fab601c4a67d45f4bb834a5a"
 }
 
-conn_str = "postgresql://doadmin:AVNS_3ySmhXsce8tYzPfT5af@db-postgresql-fra1-53122-do-user-13725825-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require"
-
-engine = create_engine(conn_str)
-
-with engine.connect() as conn:
-    result = conn.execute('SELECT version()')
-    print(result.fetchone())
-
-
-i = 144 
-df = pd.DataFrame()
+i = 0 
 while True:
-
+    print(i)
     params = {
         "page": i
     }
@@ -43,10 +38,8 @@ while True:
     if response.text == "[]":
         break
     js = json.loads(response.text)
-    df = df.append(js, ignore_index=True)
+    print(response)
+    print(js)
+    collection.insert_many(js)
     i += 1
-    print(df)
     time.sleep(.5)
-
-df = df[~df['email'].str.startswith('3b3')]
-print(df)
